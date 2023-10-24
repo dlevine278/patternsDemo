@@ -1,0 +1,72 @@
+{
+  "id": "demo pipeline",
+  "fastFail": true,
+  "stages": [
+    {
+      "id": "stage 0",
+      "className": "org.dplevine.patterns.demo.pipelineDemo.PipelineDemo"
+    },
+    {
+      "id": "stage 1",
+      "className": "org.dplevine.patterns.demo.pipelineDemo.PipelineDemo"
+    },
+    {
+      "id": "stage 2",
+      "className": "org.dplevine.patterns.demo.pipelineDemo.PipelineDemo"
+    },
+    {
+      "id": "stage 3",
+      "className": "org.dplevine.patterns.demo.pipelineDemo.PipelineDemo"
+    },
+    {
+      "id": "stage 4",
+      "className": "org.dplevine.patterns.demo.pipelineDemo.PipelineDemo"
+    },
+    {
+      "id": "stage 5",
+      "className": "org.dplevine.patterns.demo.pipelineDemo.PipelineDemo"
+    },
+    {
+      "id": "stage 6",
+      "className": "org.dplevine.patterns.demo.pipelineDemo.PipelineDemo"
+    },
+    {
+      "id": "stage 7",
+      "className": "org.dplevine.patterns.demo.pipelineDemo.PipelineDemo"
+    },
+    {
+      "id": "stage 8",
+      "className": "org.dplevine.patterns.demo.pipelineDemo.PipelineDemo"
+    },
+    {
+      "id": "stage 9",
+      "className": "org.dplevine.patterns.demo.pipelineDemo.PipelineDemo"
+    }
+  ],
+  "parallels": [
+    {
+      "id": "parallel 1",
+      "parallelPipelines": [
+        {
+          "steps": [
+            "stage 4",
+            "stage 5"
+          ]
+        },
+        {
+          "steps": [
+            "stage 2",
+            "stage 3"
+          ]
+        }
+      ]
+    }
+  ],
+  "steps": [
+    "stage 0",
+    "parallel 1",
+    "stage 7",
+    "stage 8",
+    "stage 9"
+  ]
+}
