@@ -9,7 +9,7 @@ import java.util.concurrent.Future;
 
 public class PipelineDemo implements Stage, StageBuilder {
 
-    static final String PIPLINE_GRAPH = "/pipelineDemo.json";
+    static final String PIPLINE_GRAPH = "/tmp/pipelineDemo.json";
     static final Long MAX_DELAY = 10L;
     private Pipeline demoPipeline;
 
@@ -48,8 +48,8 @@ public class PipelineDemo implements Stage, StageBuilder {
         try {
             PipelineBuilder builder = PipelineBuilder.createBuilder();
 
-            URL url = PipelineDemo.class.getResource(PIPLINE_GRAPH);
-            demoPipeline = builder.buildFromPathName(url.getPath());
+            //URL url = PipelineDemo.class.getResource(PIPLINE_GRAPH);
+            demoPipeline = builder.buildFromPathName(PIPLINE_GRAPH);
 
             TimerContext context = new TimerContext();
             context.setMaxDelay(MAX_DELAY);
@@ -69,6 +69,4 @@ public class PipelineDemo implements Stage, StageBuilder {
     public BufferedImage getImage() throws Exception {
             return demoPipeline.render();
     }
-
-
 }

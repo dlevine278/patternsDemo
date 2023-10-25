@@ -11,9 +11,9 @@
 		<relativePath/>
 	</parent>
 
-	<groupId>org.dplevine.designPatterns</groupId>
+	<groupId>org.dplevine</groupId>
 	<artifactId>patternsDemo</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0-SNAPSHOT</version>
 	<description>SpringBoot service to demo design patterns</description>
 
 	<dependencies>
@@ -49,11 +49,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.dplevine.designPatterns.pipeline</groupId>
-			<artifactId>pipeline.jar</artifactId>
-			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>/Users/dplevine/dev/designPatterns/Pipeline/out/artifacts/Pipeline_jar/pipeline.jar</systemPath>
+			<groupId>org.dplevine</groupId>
+			<artifactId>Pipeline</artifactId>
+			<version>1.0-SNAPSHOT</version>
 		</dependency>
 
 	</dependencies>
