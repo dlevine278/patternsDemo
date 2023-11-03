@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Data Fetcher</title>
+</head>
+<body>
+<div id="id-container">
+    <b>
+        <div id="id-output">
+        </div>
+    </b>
+</div>
+<div id="image-container">
+    <img id="image" src="" alt="Fetched Image" />
+</div>
+<div id="json-container">
+    <div id="json-output">
+        <pre></pre>
+    </div>
+</div>
+
+<script>
+        const idContainer = document.getElementById("id-container");
+        const idOutput = document.getElementById("id-output");
+        const imageContainer = document.getElementById("image-container");
+        const imageElement = document.getElementById("image");
+        const jsonContainer = document.getElementById("json-container");
+        const jsonOutput = document.querySelector("#json-output pre");
+
+        let id;
+        let endTime;
+
+        // Function to fetch an ID once
+        async function fetchIdOnce() {
+            try {
+                const response = await fetch('http://localhost:8080/patterns/pipeline');
+                const data = await response.json();
+		        idOutput.textContent = data.id;
+                return data.id;
+            } catch (error) {
+                console.error("Error fetching ID:", error);
+            }
+        }
+
+        // Function to fetch and render an image
+        async function fetchAndRenderImage(id) {
+            try {
+                const response = await fetch(`http://localhost:8080/patterns/pipeline/graph/${id}`);
+                const blob = await response.blob();
+                const imageUrl = URL.createObjectURL(blob);
+
+                // Update the image source
+                imageElement.src = imageUrl;
+            } catch (error) {
+                console.error("Error fetching image:", error);
+            }
+        }
+
+        // Function to fetch and render JSON
+        async function fetchAndRenderJSON(id) {
+            try {
+                const response = await fetch(`http://localhost:8080/patterns/pipeline/log/${id}`);
+                const data = await response.json();
+                const formattedJSON = JSON.stringify(data, null, 2);
+
+                // Update the JSON output
+                jsonOutput.textContent = formattedJSON;
+            } catch (error) {
+                console.error("Error fetching JSON:", error);
+            }
+        }
+
+        // function to fetch data and update every 2 seconds, for a max of 2 minutes
+        async function fetchDataAndUpdate() {
+            if (!id) {
+                id = await fetchIdOnce();
+                endTime = Date.now() + 120000; // 2 minutes timeout
+            }
+
+            if (Date.now() < endTime) {
+                fetchAndRenderImage(id);
+                fetchAndRenderJSON(id);
+            } else {
+                clearInterval(fetchInterval); // Stop fetching after 2 minutes
+            }
+        }
+
+        // Fetch and update data initially
+        fetchDataAndUpdate();
+
+        // Set an interval to fetch and update the data every 2 seconds
+        const fetchInterval = setInterval(fetchDataAndUpdate, 2000); // 2 seconds in milliseconds
+    </script>
+</body>
+</html>
+

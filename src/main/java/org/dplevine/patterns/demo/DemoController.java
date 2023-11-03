@@ -4,6 +4,7 @@ import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.dplevine.patterns.demo.pipelineDemo.PipelineDemo;
 import org.dplevine.patterns.pipeline.Pipeline;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -20,7 +22,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-@RestController
+@Controller
 public class DemoController {
     private static int MAX_DEMOS = 1000;
     private static long MAX_TIME_SECONDS = 60 * 15;  // demos can stick around for 15 min before they get purged
@@ -94,28 +96,15 @@ public class DemoController {
     @GetMapping(value = "/patterns/demos", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String getList() {
-        return "list";
+        return "index";
     }
 
-
-    @RequestMapping(value = "/patterns/index", method = RequestMethod.GET)
-    public void getDemolist(HttpServletResponse response) throws IOException {
-        try {
-            response.setHeader("Access-Control-Allow-Origin", "*");
-            response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-            response.setHeader("Access-Control-Max-Age", "3600");
-            response.setHeader("Access-Control-Allow-Headers", "X-PINGOTHER,Content-Type,X-Requested-With,accept,Origin,Access-Control-Request-Method,Access-Control-Request-Headers,Authorization");
-            response.setHeader("Access-Control-Expose-Headers", "xsrf-token");
-            response.setContentType(MediaType.TEXT_PLAIN_VALUE);
-            final PrintWriter pw = response.getWriter();
-            pw.println("patterns");
-            pw.close();
-        } catch (Exception e) {
-            e.getMessage();
-        }
+    @GetMapping(path = "/patterns/pipeline/demo")
+    public String index(HttpServletRequest request, Principal principal) {
+        return "pipeline";
     }
 
-    @RequestMapping(value = "/patterns/demos/pipeline")
+    @RequestMapping(value = "/patterns/pipeline")
     public void startNewPipelineDemo(HttpServletRequest request, HttpServletResponse response) {
         String uuid;
         try {
@@ -134,7 +123,7 @@ public class DemoController {
         }
     }
 
-    @RequestMapping(value = "/patterns/demos/pipeline/graph/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/patterns/pipeline/graph/{id}", method = RequestMethod.GET)
     public void getImageAsByteArray(@PathVariable String id, HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             PipelineDemo pipelineDemo = (PipelineDemo) ActiveDemos.getDemos().getActiveDemo(id);
@@ -154,7 +143,7 @@ public class DemoController {
         }
     }
 
-    @RequestMapping(value = "/patterns/demos/pipeline/log/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/patterns/pipeline/log/{id}", method = RequestMethod.GET)
     public void getEventLog(@PathVariable String id, HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             PipelineDemo pipelineDemo = (PipelineDemo) ActiveDemos.getDemos().getActiveDemo(id);
