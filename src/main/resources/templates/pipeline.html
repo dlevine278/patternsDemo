@@ -1,25 +1,43 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Data Fetcher</title>
+    <title>Pipeline Demo</title>
+    <style>
+        #json-container {
+            max-height: 900px;
+            width: 100%;
+            overflow: scroll; /* Use 'scroll' value to make scroll bars visible */
+        }
+    </style>
+    <br>
+    <br>
 </head>
+
+
 <body>
-<div id="id-container">
+    Demo ID: <div id="id-container">
     <b>
         <div id="id-output">
         </div>
     </b>
 </div>
-<div id="image-container">
-    <img id="image" src="" alt="Fetched Image" />
+    <br>
+    <br>
+Pipeline Image: <div id="image-container">
+    <img id="image" src="" alt="Pipeline Image" />
 </div>
+    <br>
+    <br>
+    Pipeline Execution Logs
+    <br>
 <div id="json-container">
     <div id="json-output">
         <pre></pre>
     </div>
 </div>
 
-<script>
+<script th:inline="javascript">
+
         const idContainer = document.getElementById("id-container");
         const idOutput = document.getElementById("id-output");
         const imageContainer = document.getElementById("image-container");
@@ -29,11 +47,19 @@
 
         let id;
         let endTime;
+        let hostname = [[${hostname}]];
+        let urlBase = 'http://' + hostname + ':8080/patterns/pipeline';
 
         // Function to fetch an ID once
         async function fetchIdOnce() {
             try {
-                const response = await fetch('http://localhost:8080/patterns/pipeline');
+
+                let fastFail = [[${param.fastFail}]];
+                if (!fastFail) {
+                    fastFail = true;
+                }
+                let demoURL = urlBase + '?fastFail=' + fastFail;
+                const response = await fetch(demoURL);
                 const data = await response.json();
 		        idOutput.textContent = data.id;
                 return data.id;
@@ -45,7 +71,7 @@
         // Function to fetch and render an image
         async function fetchAndRenderImage(id) {
             try {
-                const response = await fetch(`http://localhost:8080/patterns/pipeline/graph/${id}`);
+                const response = await fetch(urlBase + `/graph/${id}`);
                 const blob = await response.blob();
                 const imageUrl = URL.createObjectURL(blob);
 
@@ -59,7 +85,7 @@
         // Function to fetch and render JSON
         async function fetchAndRenderJSON(id) {
             try {
-                const response = await fetch(`http://localhost:8080/patterns/pipeline/log/${id}`);
+                const response = await fetch(urlBase + `/log/${id}`);
                 const data = await response.json();
                 const formattedJSON = JSON.stringify(data, null, 2);
 

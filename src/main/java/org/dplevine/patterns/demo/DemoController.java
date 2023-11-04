@@ -3,8 +3,10 @@ package org.dplevine.patterns.demo;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.dplevine.patterns.demo.pipelineDemo.PipelineDemo;
 import org.dplevine.patterns.pipeline.Pipeline;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
@@ -18,15 +20,17 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 @Controller
 public class DemoController {
-    private static int MAX_DEMOS = 1000;
+    private static int MAX_DEMOS = 50;
     private static long MAX_TIME_SECONDS = 60 * 15;  // demos can stick around for 15 min before they get purged
-
+    @Value("${patterns.hostname}")
+    private String hostname;
 
     DemoController() {
     }
@@ -100,12 +104,13 @@ public class DemoController {
     }
 
     @GetMapping(path = "/patterns/pipeline/demo")
-    public String index(HttpServletRequest request, Principal principal) {
+    public String index(@RequestParam(name = "fastFail", defaultValue = "true") Optional<Boolean> fastFail,Model model, HttpServletRequest request, Principal principal) {
+        model.addAttribute("hostname", hostname);
         return "pipeline";
     }
 
     @RequestMapping(value = "/patterns/pipeline")
-    public void startNewPipelineDemo(HttpServletRequest request, HttpServletResponse response) {
+    public void startNewPipelineDemo(@RequestParam(name = "fastFail", defaultValue = "true") Optional<Boolean> fastFail, HttpServletRequest request, HttpServletResponse response) {
         String uuid;
         try {
             PipelineDemo demo = new PipelineDemo();
@@ -117,7 +122,7 @@ public class DemoController {
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             final PrintWriter pw = response.getWriter();
             pw.print( "{ \"id\" : \"" + ActiveDemos.getDemos().addDemo(demo) + "\" }");
-            demo.runDemo();
+            demo.runDemo(fastFail.get());
         } catch (Exception e) {
             e.getMessage();
         }

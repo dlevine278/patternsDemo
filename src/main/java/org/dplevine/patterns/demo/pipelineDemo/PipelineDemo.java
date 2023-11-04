@@ -47,7 +47,7 @@ public class PipelineDemo implements Stage, StageBuilder {
         return new PipelineDemo();
     }
 
-    public void runDemo() throws Exception {
+    public void runDemo(boolean fastFail) throws Exception {
         try {
             PipelineBuilder builder = PipelineBuilder.createBuilder();
 
@@ -64,7 +64,7 @@ public class PipelineDemo implements Stage, StageBuilder {
                 Logger logger = LogManager.getLogger(PipelineDemo.class);
                 logger.info("Called " + s + " with a status of: " + executionContext.getLastStageEvent(s).getEventType());
             };
-
+/*
             demoPipeline.registerPreStageCallback("stage 0", pre);
             demoPipeline.registerPreStageCallback("stage 1", pre);
             demoPipeline.registerPreStageCallback("stage 2", pre);
@@ -86,10 +86,11 @@ public class PipelineDemo implements Stage, StageBuilder {
             demoPipeline.registerPostStageCallback("stage 7", post);
             demoPipeline.registerPostStageCallback("stage 8", post);
             demoPipeline.registerPostStageCallback("stage 9", post);
+ */
 
             TimerContext context = new TimerContext();
             context.setMaxDelay(MAX_DELAY);
-            Future<ExecutionContext> future = demoPipeline.runDetached(context);
+            Future<ExecutionContext> future = demoPipeline.runDetached(context, fastFail);
         } catch (Exception e) {
             e.getMessage();
         }

@@ -1,6 +1,5 @@
 {
   "id": "demo pipeline",
-  "fastFail": false,
   "stages": [
     {
       "id": "stage 0",
