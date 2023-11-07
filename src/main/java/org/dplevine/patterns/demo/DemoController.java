@@ -27,10 +27,10 @@ import java.util.concurrent.ConcurrentMap;
 
 @Controller
 public class DemoController {
-    private static int MAX_DEMOS = 50;
-    private static long MAX_TIME_SECONDS = 60 * 15;  // demos can stick around for 15 min before they get purged
-    @Value("${patterns.hostname}")
-    private String hostname;
+    private final static String HOST_ENV_VAR = "PATTERNS_DEMO_HOST";
+    private final static int MAX_DEMOS = 50;
+    private final static long MAX_TIME_SECONDS = 60 * 15;  // demos can stick around for 15 min before they get purged
+    private final String hostname = System.getenv().getOrDefault(HOST_ENV_VAR, "localhost");  // used by Thymeleaf template --> injected into the demo page via model attribute
 
     DemoController() {
     }
