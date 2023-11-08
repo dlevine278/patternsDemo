@@ -165,4 +165,9 @@ public class DemoController {
             e.getMessage();
         }
     }
+
+    @RequestMapping(value = "/health")
+    public String getHealth() {
+        return "healthCheck";
+    }
 }
