@@ -2,12 +2,12 @@ package org.dplevine.patterns.demo;
 
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.dplevine.patterns.demo.pipelineDemo.PipelineDemo;
-import org.dplevine.patterns.pipeline.Pipeline;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
@@ -18,12 +18,10 @@ import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 @Controller
 public class DemoController {
@@ -95,21 +93,32 @@ public class DemoController {
                 demoActivationTimes.remove(uuid);
             }
         }
+
+        String getStats() {
+            return demoActivationTimes.toString();
+        }
     }
 
-    @GetMapping(value = "/patterns/demos", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/patterns")
     @ResponseBody
-    public String getList() {
-        return "index";
+    public ModelAndView getList(ModelMap model) {
+        return new ModelAndView("forward:/patterns/pipeline", model); // forward for now given there is only one pattern to demo
     }
 
-    @GetMapping(path = "/patterns/pipeline/demo")
+    @GetMapping(value = "/patterns/stats")
+    public String demoStats(Model model) {
+
+        // add stats to the model which will be displayed by the stats page
+        return "stats";
+    }
+
+    @GetMapping(path = "/patterns/pipeline")
     public String index(@RequestParam(name = "fastFail", defaultValue = "true") Optional<Boolean> fastFail,Model model, HttpServletRequest request, Principal principal) {
         model.addAttribute("hostname", hostname);
         return "pipeline";
     }
 
-    @RequestMapping(value = "/patterns/pipeline")
+    @RequestMapping(value = "/patterns/pipeline/demo")
     public void startNewPipelineDemo(@RequestParam(name = "fastFail", defaultValue = "true") Optional<Boolean> fastFail, HttpServletRequest request, HttpServletResponse response) {
         String uuid;
         try {

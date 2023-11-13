@@ -58,7 +58,7 @@ Pipeline Execution Logs
                 if (!fastFail) {
                     fastFail = true;
                 }
-                let demoURL = urlBase + '?fastFail=' + fastFail;
+                let demoURL = urlBase + '/demo?fastFail=' + fastFail;
                 const response = await fetch(demoURL);
                 const data = await response.json();
 		        idOutput.textContent = data.id;

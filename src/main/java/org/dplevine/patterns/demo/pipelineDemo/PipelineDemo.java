@@ -50,47 +50,11 @@ public class PipelineDemo implements Stage, StageBuilder {
     public void runDemo(boolean fastFail) throws Exception {
         try {
             PipelineBuilder builder = PipelineBuilder.createBuilder();
-
-            //URL url = PipelineDemo.class.getResource(PIPLINE_GRAPH);
             demoPipeline = builder.buildFromPathName(PIPLINE_GRAPH);
-
-            StageCallback pre = (String s, Stage stage, ExecutionContext executionContext) -> {
-                Logger logger = LogManager.getLogger(PipelineDemo.class);
-
-                logger.info("Calling " + s + " ...");
-            };
-
-            StageCallback post = (String s, Stage stage, ExecutionContext executionContext) -> {
-                Logger logger = LogManager.getLogger(PipelineDemo.class);
-                logger.info("Called " + s + " with a status of: " + executionContext.getLastStageEvent(s).getEventType());
-            };
-/*
-            demoPipeline.registerPreStageCallback("stage 0", pre);
-            demoPipeline.registerPreStageCallback("stage 1", pre);
-            demoPipeline.registerPreStageCallback("stage 2", pre);
-            demoPipeline.registerPreStageCallback("stage 3", pre);
-            demoPipeline.registerPreStageCallback("stage 4", pre);
-            demoPipeline.registerPreStageCallback("stage 5", pre);
-            demoPipeline.registerPreStageCallback("stage 6", pre);
-            demoPipeline.registerPreStageCallback("stage 7", pre);
-            demoPipeline.registerPreStageCallback("stage 8", pre);
-            demoPipeline.registerPreStageCallback("stage 9", pre);
-
-            demoPipeline.registerPostStageCallback("stage 0", post);
-            demoPipeline.registerPostStageCallback("stage 1", post);
-            demoPipeline.registerPostStageCallback("stage 2", post);
-            demoPipeline.registerPostStageCallback("stage 3", post);
-            demoPipeline.registerPostStageCallback("stage 4", post);
-            demoPipeline.registerPostStageCallback("stage 5", post);
-            demoPipeline.registerPostStageCallback("stage 6", post);
-            demoPipeline.registerPostStageCallback("stage 7", post);
-            demoPipeline.registerPostStageCallback("stage 8", post);
-            demoPipeline.registerPostStageCallback("stage 9", post);
- */
 
             TimerContext context = new TimerContext();
             context.setMaxDelay(MAX_DELAY);
-            Future<ExecutionContext> future = demoPipeline.runDetached(context, fastFail);
+            /* Future<ExecutionContext> future = */ demoPipeline.runDetached(context, fastFail);
         } catch (Exception e) {
             e.getMessage();
         }
