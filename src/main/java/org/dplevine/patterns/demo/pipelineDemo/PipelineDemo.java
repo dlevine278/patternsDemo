@@ -1,19 +1,29 @@
 package org.dplevine.patterns.demo.pipelineDemo;
 
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.dplevine.patterns.pipeline.*;
 
 import java.awt.image.BufferedImage;
-import java.net.URL;
-import java.util.concurrent.Future;
+import java.util.List;
+import java.util.Vector;
 
-
+@StageBuilderDefinition(id = "stage 0")
+@StageBuilderDefinition(id = "stage 1")
+@StageBuilderDefinition(id = "stage 2")
+@StageBuilderDefinition(id = "stage 3")
+@StageBuilderDefinition(id = "stage 4")
+@StageBuilderDefinition(id = "stage 5")
+@StageBuilderDefinition(id = "stage 6")
+@StageBuilderDefinition(id = "stage 7")
+@StageBuilderDefinition(id = "stage 8")
+@StageBuilderDefinition(id = "stage 9")
+@PipelineStepsDefinition(pipelineRootId = "Demo Pipeline", parallelId = "parallel 1", steps = {"stage 1", "stage 2"})
+@PipelineStepsDefinition(pipelineRootId = "Demo Pipeline", parallelId = "parallel 1", steps = {"stage 3", "stage 4"})
+@PipelineStepsDefinition(pipelineRootId = "Demo Pipeline", parallelId = "parallel 1", steps = {"stage 5", "stage 6"})
+@PipelineStepsDefinition(pipelineRootId = "Demo Pipeline", steps = {"stage 0", "parallel 1", "stage 7", "stage 8", "stage 9"})
 public class PipelineDemo implements Stage, StageBuilder {
-
+    private final static String MAX_DELAY_ENV_VAR = "PIPELINE_DEMO_MAX_DELAY";
     static final String PIPLINE_GRAPH = "/tmp/pipelineDemo.json";
-    static final Long MAX_DELAY = 10L;
+    static final Long MAX_DELAY_DEFAULT = 10L;
     private Pipeline demoPipeline;
 
     public static class TimerContext extends ExecutionContext {
@@ -48,12 +58,16 @@ public class PipelineDemo implements Stage, StageBuilder {
     }
 
     public void runDemo(boolean fastFail) throws Exception {
+        Long maxDelay = Long.valueOf(System.getenv().getOrDefault(MAX_DELAY_ENV_VAR, MAX_DELAY_DEFAULT.toString()));
         try {
-            PipelineBuilder builder = PipelineBuilder.createBuilder();
-            demoPipeline = builder.buildFromPathName(PIPLINE_GRAPH);
+            List<String> packages = new Vector<>();
+            packages.add(PipelineDemo.class.getPackage().getName());
+            PipelineBuilder builder = PipelineBuilder.createBuilder(packages);
+            //demoPipeline = builder.buildFromPathName(PIPLINE_GRAPH);
+            demoPipeline = builder.buildFromAnnotations("Demo Pipeline");
 
             TimerContext context = new TimerContext();
-            context.setMaxDelay(MAX_DELAY);
+            context.setMaxDelay(maxDelay);
             /* Future<ExecutionContext> future = */ demoPipeline.runDetached(context, fastFail);
         } catch (Exception e) {
             e.getMessage();
