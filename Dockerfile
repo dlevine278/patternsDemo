@@ -1,7 +1,6 @@
 FROM --platform=linux/amd64 openjdk:17
 
 COPY ./target/patternsDemo-1.0-SNAPSHOT.jar /tmp
-COPY ./src/main/resources/pipelineDemo.json /tmp
 
 EXPOSE 8080
 
